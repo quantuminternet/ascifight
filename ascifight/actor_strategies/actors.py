@@ -73,7 +73,9 @@ class Actor:
         issue_order(order="attack", actor_id=self.actor_id, direction=direction)
 
     def destroy_walls(self):
-        pass
+        directions = ['left', 'right', 'top', 'bottom']
+        direction = random.choice(directions)
+        issue_order(order="destroy", actor_id=self.actor_id, direction=direction)
 
     def execute(self, gamestate):
         self.make_attack()
