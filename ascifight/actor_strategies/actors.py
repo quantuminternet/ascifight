@@ -14,25 +14,20 @@ class GetFlagStrategy(Strategy):
         self.target = target
 
     def execute(self, gamestate):
-        # TODO: fix times if game has not yet started
-        time_to_next_execution: datetime.timedelta
-        time_of_next_execution: datetime.datetime
-        my_game: game.Game
-        command_queue: asyncio.Queue[game.Order | object] = asyncio.Queue()
         teams.remove(TEAM)
         # this teams flag we want to get
         target_team = teams[0]
         # this is the base we need to go to, assuming their flag is there?
-        target_base = [base for base in state["bases"] if base["team"] == target_team][0]
+        target_base = [base for base in gamestate["bases"] if base["team"] == target_team][0]
         # these are the bases coordinates
         target_coordinates = target_base["coordinates"]
         # this is our base
-        home_base = [base for base in state["bases"] if base["team"] == TEAM][0]
+        home_base = [base for base in gamestate["bases"] if base["team"] == TEAM][0]
         # we need the coordinates when we want to go home
         home_coordinates = home_base["coordinates"]
         # we will just use the first of our actors we have
         # assuming that it will be able to grab the flag
-        actor = [actor for actor in state["actors"] if actor["team"] == TEAM][0]
+        actor = [actor for actor in gamestate["actors"] if actor["team"] == TEAM][0]
         # thats where the actor currently is
         actor_coordinates = actor["coordinates"]
         # if it doesn't have the flag it needs to go to the enemy base
@@ -56,10 +51,10 @@ class GetFlagStrategy(Strategy):
             )[0]
 
 class Actor:
-
-    def __init__(self, strategy: str, actor_id: int):
+    def __init__(self, strategy: str, actor_id: int, gamestate):
         self.actor_id = actor_id
         self.strategy = self.construct_strategy(strategy=strategy)
+        self.gamestate = gamestate
 
     def construct_strategy(self, strategy: str) -> Strategy:
         strategy_dict = {}
