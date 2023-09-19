@@ -24,7 +24,7 @@ class Actor:
         ascifight.strategy.issue_order(order="destroy", actor_id=self.actor_id, direction=direction, client=self.client)
 
     def execute(self, gamestate, rules):
-        #self.make_attack(gamestate=gamestate)
-        #self.destroy_walls()
+        self.make_attack(gamestate=gamestate)
+        self.destroy_walls()
         self.strategy.execute(gamestate=gamestate, rules=rules)
 
