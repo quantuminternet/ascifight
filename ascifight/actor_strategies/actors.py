@@ -49,14 +49,19 @@ class GetFlagStrategy(Strategy):
                 origin=actor_coordinates, target=home_coordinates
             )[0]
 
+
 class Actor:
     def __init__(self, strategy: str, actor_id: int):
         self.actor_id = actor_id
         self.strategy = self.construct_strategy(strategy=strategy)
 
     def construct_strategy(self, strategy: str) -> Strategy:
-        strategy_dict = {}
-        return strategy_dict.get(strategy)
+        if strategy == 'GetFlag0':
+            return GetFlagStrategy(target='TimeOut')
+        elif strategy == 'GetFlag1':
+            return GetFlagStrategy(target='Superdetractors')
+        elif strategy == 'GetFlag2':
+            return GetFlagStrategy(target='ByteMe')
 
     def make_attack(self):
         directions = ['left', 'right', 'top', 'bottom']
