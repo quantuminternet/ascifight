@@ -113,5 +113,6 @@ def game_loop():
 
 
 if __name__ == "__main__":
+    print('Running Main')
     logging.basicConfig(level='DEBUG')
     game_loop()
