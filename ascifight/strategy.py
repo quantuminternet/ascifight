@@ -125,6 +125,41 @@ class AttackEnemyStrategy:
             issue_order(client=self.client, order="move", actor_id=actor["ident"], direction=direction)
 
 
+class AttackAreaStrategy:
+
+    def __init__(self, client, actor_id: int, target: dict, distance: int = 3):
+        self.client = client
+        self.actor_id = actor_id
+        self.distance = distance
+        self.target = target
+
+    def execute(self, gamestate: dict, rules: dict):
+        actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][self.actor_id]
+        actor_coordinates = actor["coordinates"]
+        targets = [actor for actor in gamestate["actors"] if actor["team"] != TEAM
+                   and abs(self.target["x"] - actor_coordinates["y"]) <= self.distance
+                   and abs(self.target["y"] - actor_coordinates["y"]) <= self.distance]
+        if targets:
+            target = sorted(targets,
+                            key=lambda enemy: computations.distance(to_coordinates(enemy['coordinates']),
+                                                                   to_coordinates(actor_coordinates)),
+                            reverse=True)[0]["coordinates"]
+        else:
+            target = self.target
+        target_coordinates = to_coordinates(target)
+        direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
+                                          target=target_coordinates, team=TEAM)
+        if compute_distance(origin=actor_coordinates,
+                            target={'x': target_coordinates.x, 'y': target_coordinates.y}) == 1:
+            # If we are next to an enemy, attack again for good measure
+            ascifight.strategy.issue_order(order="destroy",
+                                           actor_id=actor["ident"],
+                                           direction=direction,
+                                           client=self.client)
+        else:
+            issue_order(client=self.client, order="move", actor_id=actor["ident"], direction=direction)
+
+
 class DestroyerStrategy:
 
     def __init__(self, client, actor_id: int):
