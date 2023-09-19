@@ -18,8 +18,6 @@ def find_path(game_state: dict, rules: dict, target: Coordinates,
 
     path_dict = {target: 0}
     current_steps = [target]
-    print(target)
-    print(origin)
 
     def next_field(field: Coordinates):
         fields = [Coordinates(x=field.x - 1, y=field.y),
@@ -41,7 +39,6 @@ def find_path(game_state: dict, rules: dict, target: Coordinates,
                     continue
                 path_dict[field] = move_count + 1
                 if field.x == origin.x and field.y == origin.y:
-                    print(field)
                     target_found = True
                     break
                 next_steps.append(field)
@@ -49,7 +46,6 @@ def find_path(game_state: dict, rules: dict, target: Coordinates,
             break
         current_steps = next_steps
 
-    print(path_dict)
     origin_next_fields = next_field(origin)
     distance = {field: path_dict.get(field, 500) for field in origin_next_fields}
     distance = dict(sorted(distance.items(), key=lambda item: item[1]))
