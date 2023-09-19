@@ -2,6 +2,7 @@ import actor_strategies.actors
 import structlog
 import ascifight.computations as computations
 import ascifight.pathfinding as pathfinding
+import ascifight.util
 
 logger = structlog.get_logger()
 
@@ -33,14 +34,7 @@ def get_strategy(remote_actor, client, game_state):
             return GetFlagStrategy(target=sorted_targets[1], client=client, actor_id=remote_actor['ident'])
 
     elif remote_actor['type'] == 'Attacker':
-        if remote_actor['ident'] == 0:
-            return GetFlagStrategy(target='Timeout', client=client, actor_id=remote_actor['ident'])
-        elif remote_actor['ident'] == 1:
-            return GetFlagStrategy(target='Superdetractors', client=client, actor_id=remote_actor['ident'])
-        elif remote_actor['ident'] == 2:
-            return GetFlagStrategy(target='ByteMe', client=client, actor_id=remote_actor['ident'])
-        else:
-            return GetFlagStrategy(target='ByteMe', client=client, actor_id=remote_actor['ident'])
+        return AttackEnemyStrategy(client=client, actor_id=remote_actor['ident'])
 
 
 
@@ -90,6 +84,28 @@ class GetFlagStrategy:
             else:
                 # if we are not there we slog on home
                 issue_order(order="move", actor_id=actor["ident"], direction=direction, client=self.client)
+
+
+class AttackEnemyStrategy:
+
+    def __init__(self, client, actor_id: int):
+        self.client = client
+        self.actor_id = actor_id
+
+    def execute(self, gamestate: dict, rules: dict):
+        actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][self.actor_id]
+        actor_coordinates = actor["coordinates"]
+        target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
+                                                                          team='EverythingsAwesome',
+                                                                          actor_id=actor["ident"])
+        direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
+                                          target=target_coordinates, team=TEAM)
+        #if compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
+        #    pass
+        # if we are not there yet we need to go
+        #else:
+        issue_order(client=self.client, order="move", actor_id=actor["ident"], direction=direction)
+
 
 
 def to_coordinates(input_coords: dict):
