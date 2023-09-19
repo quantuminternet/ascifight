@@ -97,7 +97,8 @@ class AttackEnemyStrategy:
         actor_coordinates = actor["coordinates"]
         target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
                                                                           team='EverythingsAwesome',
-                                                                          actor_id=actor["ident"])
+                                                                          actor_id=actor["ident"],
+                                                                          actor_type='Runner')
         direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
                                           target=target_coordinates, team=TEAM)
         if compute_distance(origin=actor_coordinates,

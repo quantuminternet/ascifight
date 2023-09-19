@@ -189,8 +189,11 @@ def get_nearest_enemy_direction(game_state: dict, team: str, actor_id: int) -> l
     return list(directions)
 
 
-def get_nearest_enemy_coordinates(game_state: dict, team: str, actor_id: int) -> computations.Coordinates:
+def get_nearest_enemy_coordinates(game_state: dict, team: str, actor_id: int, actor_type: str | None = None) \
+        -> computations.Coordinates:
     enemy_actors = [actor for actor in game_state['actors'] if actor['team'] != team]
+    if type:
+        enemy_actors = [actor for actor in enemy_actors if actor['type'] == actor_type]
     this_actor = next(actor for actor in game_state['actors'] if actor['team'] == team and actor['ident'] == actor_id)
     nearest_enemy = sorted(enemy_actors,
                            key=lambda enemy: computations.distance(to_coordinates(enemy['coordinates']),
