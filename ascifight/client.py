@@ -10,8 +10,8 @@ logger = structlog.get_logger()
 SERVER = "http://84.63.250.234/"
 # local server
 # SERVER = "http://127.0.0.1:8000"
-TEAM = "Team 2"
-PASSWORD = "2"
+TEAM = "EverythingsAwesome"
+PASSWORD = "VFRulez"
 client = None
 # does not seem to work
 # proxy = 'http://139.7.95.77:8080'
@@ -36,7 +36,7 @@ def execute():
     home_coordinates = home_base["coordinates"]
     # we will just use the first of our actors we have
     # assuming that it will be able to grab the flag
-    actor = [actor for actor in state["actors"] if actor["team"] == TEAM][1]
+    actor = [actor for actor in state["actors"] if actor["team"] == TEAM][0]
     # thats where the actor currently is
     actor_coordinates = actor["coordinates"]
     # if it doesn't have the flag it needs to go to the enemy base
@@ -53,7 +53,7 @@ def execute():
         else:
             issue_order(order="move", actor_id=actor["ident"], direction=direction)
             # attack everything that might be in the path
-            #issue_order(order="attack", actor_id=actor["ident"], direction=direction)
+            issue_order(order="attack", actor_id=actor["ident"], direction=direction)
     # if it has the flag we need to head home
     else:
         # where is home?
@@ -68,7 +68,7 @@ def execute():
         else:
             # if we are not there we slog on home
             issue_order(order="move", actor_id=actor["ident"], direction=direction)
-            #issue_order(order="attack", actor_id=actor["ident"], direction=direction)
+            issue_order(order="attack", actor_id=actor["ident"], direction=direction)
 
 
 def get_information(info_type: str):
