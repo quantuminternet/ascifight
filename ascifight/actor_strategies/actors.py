@@ -20,8 +20,8 @@ class Actor:
         direction = random.choice(directions)
         ascifight.strategy.issue_order(order="destroy", actor_id=self.actor_id, direction=direction, client=self.client)
 
-    def execute(self, gamestate):
-        self.make_attack()
-        self.destroy_walls()
-        self.strategy.execute(gamestate=gamestate)
+    def execute(self, gamestate, rules):
+        #self.make_attack()
+        #self.destroy_walls()
+        self.strategy.execute(gamestate=gamestate, rules=rules)
 

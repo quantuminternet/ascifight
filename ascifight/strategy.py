@@ -14,18 +14,18 @@ PASSWORD = "VFRulez"
 def create_actor(remote_actor, client):
     strategy = get_strategy(remote_actor, client)
     logger.info('Creating actor for remote actor', remote_actor=remote_actor['ident'])
-    return actor_strategies.actors.Actor(strategy=strategy, actor_id=remote_actor['ident'])
+    return actor_strategies.actors.Actor(strategy=strategy, actor_id=remote_actor['ident'], client=client)
 
 
 def get_strategy(remote_actor, client):
     if remote_actor['ident'] == 0:
-        return GetFlagStrategy(target='Timeout', client=client)
+        return GetFlagStrategy(target='Timeout', client=client, actor_id=remote_actor['ident'])
     elif remote_actor['ident'] == 1:
-        return GetFlagStrategy(target='Superdetractors', client=client)
+        return GetFlagStrategy(target='Superdetractors', client=client, actor_id=remote_actor['ident'])
     elif remote_actor['ident'] == 2:
-        return GetFlagStrategy(target='ByteMe', client=client)
+        return GetFlagStrategy(target='ByteMe', client=client, actor_id=remote_actor['ident'])
     else:
-        return GetFlagStrategy(target='ByteMe', client=client)
+        return GetFlagStrategy(target='ByteMe', client=client, actor_id=remote_actor['ident'])
 
 
 class GetFlagStrategy:
@@ -70,10 +70,10 @@ class GetFlagStrategy:
             # if we are already just 1 space apart we are there
             if compute_distance(origin=actor_coordinates, target=home_coordinates) == 1:
                 # we put the flag on our base
-                issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
+                issue_order(order="grabput", actor_id=actor["ident"], direction=direction, client=self.client)
             else:
                 # if we are not there we slog on home
-                issue_order(order="move", actor_id=actor["ident"], direction=direction)
+                issue_order(order="move", actor_id=actor["ident"], direction=direction, client=self.client)
 
 
 def to_coordinates(input_coords: dict):
