@@ -22,6 +22,7 @@ proxy = None
 def execute():
     # put your execution code here
     state = get_information("game_state")
+    rules = get_information("game_rules")
     #teams = state["teams"].copy()
 
     own_remote_actors = [actor for actor in state['actors'] if actor['team'] == TEAM]
@@ -30,7 +31,7 @@ def execute():
 
     for actor in actors:
         logger.info('Executing actor')
-        actor.execute(state)
+        actor.execute(state, rules)
 
 
 

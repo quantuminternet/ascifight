@@ -1,6 +1,7 @@
 import actor_strategies.actors
 import structlog
 import ascifight.computations as computations
+import ascifight.pathfinding as pathfinding
 
 logger = structlog.get_logger()
 
@@ -28,11 +29,12 @@ def get_strategy(remote_actor, client):
 
 
 class GetFlagStrategy:
-    def __init__(self, target: str, client):
+    def __init__(self, target: str, client, actor_id: int):
         self.target = target
         self.client = client
+        self.actor_id = actor_id
 
-    def execute(self, gamestate):
+    def execute(self, gamestate: dict, rules: dict):
         # this teams flag we want to get
         target_team = self.target
         # this is the base we need to go to, assuming their flag is there?
@@ -43,17 +45,15 @@ class GetFlagStrategy:
         home_base = [base for base in gamestate["bases"] if base["team"] == 'EverythingsAwesome'][0]
         # we need the coordinates when we want to go home
         home_coordinates = home_base["coordinates"]
-        # we will just use the first of our actors we have
-        # assuming that it will be able to grab the flag
-        actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][0]
-        # thats where the actor currently is
+
+        actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][self.actor_id]
         actor_coordinates = actor["coordinates"]
         # if it doesn't have the flag it needs to go to the enemy base
         if not actor["flag"]:
             # we can calculate the direction of the enemy base or get it from the server
-            direction = compute_direction(
-                origin=actor_coordinates, target=target_coordinates
-            )[0]
+            direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
+                                              target=to_coordinates(target_coordinates), team=TEAM)
+
             # we need to stop if we are standing right next to the base
             if compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
                 # and grab the flag, the direction is the one we would have walked to
@@ -64,9 +64,8 @@ class GetFlagStrategy:
         # if it has the flag we need to head home
         else:
             # where is home?
-            direction = compute_direction(
-                origin=actor_coordinates, target=home_coordinates
-            )[0]
+            direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
+                                              target=to_coordinates(home_coordinates), team=TEAM)
 
             # if we are already just 1 space apart we are there
             if compute_distance(origin=actor_coordinates, target=home_coordinates) == 1:
