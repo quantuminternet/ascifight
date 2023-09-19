@@ -22,7 +22,7 @@ class Actor:
 
 
     def execute(self, gamestate):
-        self.strategy.execute(gamestate=gamestate)
         self.make_attack()
         self.destroy_walls()
+        self.strategy.execute(gamestate=gamestate)
 
