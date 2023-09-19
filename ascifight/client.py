@@ -1,12 +1,21 @@
 import httpx
-import logging
+import structlog
 import time
 
-logger = logging.getLogger()
+import ascifight.computations as computations
 
-SERVER = "http://127.0.0.1:8000/"
-TEAM = "Team 1"
-PASSWORD = "1"
+logger = structlog.get_logger()
+
+# Ralfs server
+SERVER = "http://84.63.250.234/"
+# local server
+# SERVER = "http://127.0.0.1:8000"
+TEAM = "Team 2"
+PASSWORD = "2"
+client = None
+# does not seem to work
+# proxy = 'http://139.7.95.77:8080'
+proxy = None
 
 
 def execute():
@@ -27,7 +36,7 @@ def execute():
     home_coordinates = home_base["coordinates"]
     # we will just use the first of our actors we have
     # assuming that it will be able to grab the flag
-    actor = [actor for actor in state["actors"] if actor["team"] == TEAM][0]
+    actor = [actor for actor in state["actors"] if actor["team"] == TEAM][1]
     # thats where the actor currently is
     actor_coordinates = actor["coordinates"]
     # if it doesn't have the flag it needs to go to the enemy base
@@ -43,6 +52,8 @@ def execute():
         # if we are not there yet we need to go
         else:
             issue_order(order="move", actor_id=actor["ident"], direction=direction)
+            # attack everything that might be in the path
+            #issue_order(order="attack", actor_id=actor["ident"], direction=direction)
     # if it has the flag we need to head home
     else:
         # where is home?
@@ -57,32 +68,32 @@ def execute():
         else:
             # if we are not there we slog on home
             issue_order(order="move", actor_id=actor["ident"], direction=direction)
+            #issue_order(order="attack", actor_id=actor["ident"], direction=direction)
 
 
 def get_information(info_type: str):
     url = SERVER + "states/" + info_type
-    response = httpx.get(url)
+    response = client.get(url)
     return response.json()
 
 
-def compute_direction(origin, target) -> list[str]:
-    return httpx.post(
-        url=f"{SERVER}computations/direction",
-        json={"origin": origin, "target": target},
-    ).json()
+def to_coordinates(input_coords: dict):
+    return computations.Coordinates(x=input_coords['x'], y=input_coords['y'])
+
+
+def compute_direction(origin, target) -> list[computations.Directions]:
+    return computations.calc_target_coordinate_direction(to_coordinates(origin), to_coordinates(target))
 
 
 def compute_distance(origin, target) -> int:
-    return httpx.post(
-        url=f"{SERVER}computations/distance",
-        json={"origin": origin, "target": target},
-    ).json()
+    return computations.distance(to_coordinates(origin), to_coordinates(target))
 
 
-def issue_order(order: str, actor_id: str, direction: str):
-    httpx.post(
+def issue_order(order: str, actor_id: str, direction: computations.Directions):
+    logger.info("Issuing order", order=order, actor_id=actor_id, direction=direction)
+    client.post(
         url=f"{SERVER}orders/{order}/{actor_id}",
-        params={"direction": direction},
+        params={"direction": direction.value},
         auth=(TEAM, PASSWORD),
     )
 
@@ -113,6 +124,7 @@ def game_loop():
 
 
 if __name__ == "__main__":
-    print('Running Main')
-    logging.basicConfig(level='DEBUG')
+    logger.info('Starting client')
+    client = httpx.Client(proxies=proxy)
     game_loop()
+    client.close()
