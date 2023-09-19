@@ -102,11 +102,26 @@ class AttackEnemyStrategy:
     def execute(self, gamestate: dict, rules: dict):
         actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][self.actor_id]
         actor_coordinates = actor["coordinates"]
-        target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
+
+        if self.actor_id == 1:
+            target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
                                                                           team='EverythingsAwesome',
                                                                           enemyteam='ByteMe',
                                                                           actor_id=actor["ident"],
                                                                           actor_type='Runner')
+        elif self.actor_id == 2:
+            target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
+                                                                              team='EverythingsAwesome',
+                                                                              enemyteam='Superdetractors',
+                                                                              actor_id=actor["ident"],
+                                                                              actor_type='Runner')
+        elif self.actor_id == 3:
+            target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
+                                                                              team='EverythingsAwesome',
+                                                                              enemyteam='Superdetractors',
+                                                                              actor_id=actor["ident"],
+                                                                              actor_type='Attacker')
+
         direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
                                           target=target_coordinates, team=TEAM)
 
