@@ -1,5 +1,8 @@
 import abc
+import datetime
 import random
+
+import ascifight.util
 
 class Strategy(abc.ABC):
 
@@ -10,8 +13,9 @@ class Strategy(abc.ABC):
 
 class GetFlagStrategy(Strategy):
 
-    def __init__(self, target: str):
+    def __init__(self, target: str, actor_id: int):
         self.target = target
+        self.actor_id = actor_id
 
     def execute(self, gamestate):
         # this teams flag we want to get
@@ -32,20 +36,20 @@ class GetFlagStrategy(Strategy):
         # if it doesn't have the flag it needs to go to the enemy base
         if not actor["flag"]:
             # we can calculate the direction of the enemy base or get it from the server
-            direction = compute_direction(
+            direction = ascifight.util.compute_direction(
                 origin=actor_coordinates, target=target_coordinates
             )[0]
             # we need to stop if we are standing right next to the base
-            if compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
+            if ascifight.util.compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
                 # and grab the flag, the direction is the one we would have walked to
-                issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
+                issue_order(order="grabput", actor_id=self.actor_id, direction=direction)
             # if we are not there yet we need to go
             else:
-                issue_order(order="move", actor_id=actor["ident"], direction=direction)
+                issue_order(order="move", actor_id=self.actor_id, direction=direction)
         # if it has the flag we need to head home
         else:
             # where is home?
-            direction = compute_direction(
+            direction = ascifight.util.compute_direction(
                 origin=actor_coordinates, target=home_coordinates
             )[0]
 

@@ -2,9 +2,13 @@ import os
 import structlog
 import toml
 
+import ascifight.computations as computations
+
 absolute_path = os.path.dirname(__file__)
 with open(f"{absolute_path}/config.toml", mode="r") as fp:
     config = toml.load(fp)
+
+logger = structlog.get_logger(__name__)
 
 
 time_stamper = structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S.%f", utc=False)
@@ -162,3 +166,13 @@ Find a list of endpoints that allow you to play the game below.
 
 
 """
+def to_coordinates(input_coords: dict):
+    return computations.Coordinates(x=input_coords['x'], y=input_coords['y'])
+
+
+def compute_direction(origin, target) -> list[computations.Directions]:
+    return computations.calc_target_coordinate_direction(to_coordinates(origin), to_coordinates(target))
+
+
+def compute_distance(origin, target) -> int:
+    return computations.distance(to_coordinates(origin), to_coordinates(target))
