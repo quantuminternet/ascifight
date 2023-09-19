@@ -13,7 +13,8 @@ def find_path(game_state: dict, rules: dict, target: Coordinates,
     origin = Coordinates(x=this_actor['coordinates']['x'], y=this_actor['coordinates']['y'])
     bases = game_state['bases']
     walls = game_state['walls']
-    obstacles = {(obj['coordinates']['x'], obj['coordinates']['y']) for obj_list in (other_actors, bases, walls) for obj in obj_list}
+    obstacles = {(obj['coordinates']['x'], obj['coordinates']['y']) if 'coordinates' in obj else (obj['x'], obj['y'])
+                 for obj_list in (other_actors, bases, walls) for obj in obj_list}
 
     path_dict = {target: 0}
     current_steps = [target]
