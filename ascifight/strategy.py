@@ -1,8 +1,14 @@
+import actor_strategies.actors
+import structlog
+
+
+logger = structlog.get_logger()
 
 
 def create_actor(remote_actor):
     strategy = get_strategy(remote_actor)
-    return Actor(strategy=strategy)
+    logger.info('Creating actor for remote actor', remote_actor=remote_actor['ident'])
+    return actor_strategies.actors.Actor(strategy=strategy)
 
 
 def get_strategy(remote_actor):

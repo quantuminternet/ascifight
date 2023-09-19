@@ -6,16 +6,10 @@ import strategy
 import ascifight.computations as computations
 
 SERVER = "http://sessionstation.de/"
-TEAM = "EverythingsAwesome"
-PASSWORD = "1"
 logger = structlog.get_logger()
 
-# Ralfs server
-SERVER = "http://84.63.250.234/"
-# local server
-# SERVER = "http://127.0.0.1:8000"
 TEAM = "EverythingsAwesome"
-PASSWORD = "2"
+PASSWORD = "1"
 client = None
 # does not seem to work
 # proxy = 'http://139.7.95.77:8080'
@@ -32,6 +26,7 @@ def execute():
        strategy.create_actor(remote_actor) for remote_actor in own_remote_actors]
 
     for actor in actors:
+        logger.info('Executing actor')
         actor.execute(state)
 
 
