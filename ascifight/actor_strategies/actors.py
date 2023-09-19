@@ -14,20 +14,19 @@ class GetFlagStrategy(Strategy):
         self.target = target
 
     def execute(self, gamestate):
-        teams.remove(TEAM)
         # this teams flag we want to get
-        target_team = teams[0]
+        target_team = self.target
         # this is the base we need to go to, assuming their flag is there?
         target_base = [base for base in gamestate["bases"] if base["team"] == target_team][0]
         # these are the bases coordinates
         target_coordinates = target_base["coordinates"]
         # this is our base
-        home_base = [base for base in gamestate["bases"] if base["team"] == TEAM][0]
+        home_base = [base for base in gamestate["bases"] if base["team"] == 'EverythingsAwesome'][0]
         # we need the coordinates when we want to go home
         home_coordinates = home_base["coordinates"]
         # we will just use the first of our actors we have
         # assuming that it will be able to grab the flag
-        actor = [actor for actor in gamestate["actors"] if actor["team"] == TEAM][0]
+        actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][0]
         # thats where the actor currently is
         actor_coordinates = actor["coordinates"]
         # if it doesn't have the flag it needs to go to the enemy base
@@ -51,10 +50,9 @@ class GetFlagStrategy(Strategy):
             )[0]
 
 class Actor:
-    def __init__(self, strategy: str, actor_id: int, gamestate):
+    def __init__(self, strategy: str, actor_id: int):
         self.actor_id = actor_id
         self.strategy = self.construct_strategy(strategy=strategy)
-        self.gamestate = gamestate
 
     def construct_strategy(self, strategy: str) -> Strategy:
         strategy_dict = {}
