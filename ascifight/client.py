@@ -115,7 +115,7 @@ def game_loop():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level='DEBUG')
+    #logging.basicConfig(level='DEBUG')
     logger.info('Starting client')
     client = httpx.Client(proxies=proxy)
     game_loop()

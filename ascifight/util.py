@@ -184,19 +184,24 @@ def get_nearest_enemy_direction(game_state: dict, team: str, actor_id: int) -> l
     nearest_enemy = sorted(enemy_actors,
                            key=lambda enemy: computations.distance(to_coordinates(enemy['coordinates']),
                                                                    to_coordinates(this_actor['coordinates'])),
-                           reverse=True)[0]
+                           reverse=False)[0]
     directions = compute_direction(origin=this_actor['coordinates'], target=nearest_enemy['coordinates'])
     return list(directions)
 
 
-def get_nearest_enemy_coordinates(game_state: dict, team: str, actor_id: int, actor_type: str | None = None) \
+def get_nearest_enemy_coordinates(game_state: dict, team: str, actor_id: int, actor_type: str | None = None,
+                                  enemyteam=None) \
         -> computations.Coordinates:
     enemy_actors = [actor for actor in game_state['actors'] if actor['team'] != team]
     if actor_type:
         enemy_actors = [actor for actor in enemy_actors if actor['type'] == actor_type]
+
+    if enemyteam:
+        enemy_actors = [actor for actor in enemy_actors if actor['team'] == enemyteam]
+
     this_actor = next(actor for actor in game_state['actors'] if actor['team'] == team and actor['ident'] == actor_id)
     nearest_enemy = sorted(enemy_actors,
                            key=lambda enemy: computations.distance(to_coordinates(enemy['coordinates']),
                                                                    to_coordinates(this_actor['coordinates'])),
-                           reverse=True)[0]
+                           reverse=False)[0]
     return to_coordinates(nearest_enemy['coordinates'])

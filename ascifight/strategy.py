@@ -99,14 +99,20 @@ class AttackEnemyStrategy:
         actor_coordinates = actor["coordinates"]
         target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
                                                                           team='EverythingsAwesome',
+                                                                          enemyteam='ByteMe',
                                                                           actor_id=actor["ident"],
                                                                           actor_type='Runner')
         direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
                                           target=target_coordinates, team=TEAM)
+
+        logger.info('Attacker finding target', actor=actor_coordinates, target=target_coordinates)
+
         if compute_distance(origin=actor_coordinates,
                             target={'x': target_coordinates.x, 'y': target_coordinates.y}) == 1:
             # If we are next to an enemy, attack again for good measure
-            ascifight.strategy.issue_order(order="destroy",
+
+            logger.info('Attacker attacking')
+            ascifight.strategy.issue_order(order="attack",
                                            actor_id=actor["ident"],
                                            direction=direction,
                                            client=self.client)
@@ -123,19 +129,12 @@ class DestroyerStrategy:
     def execute(self, gamestate: dict, rules: dict):
         actor = [actor for actor in gamestate["actors"] if actor["team"] == 'EverythingsAwesome'][self.actor_id]
         actor_coordinates = actor["coordinates"]
-        target_coordinates = ascifight.util.get_nearest_enemy_coordinates(game_state=gamestate,
-                                                                          team='EverythingsAwesome',
-                                                                          actor_id=actor["ident"])
+        target_coordinates = [base for base in gamestate["bases"] if base["team"] == 'EverythingsAwesome'][0]['coordinates']
         direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
-                                          target=target_coordinates, team=TEAM)
-        if compute_distance(origin=actor_coordinates,
-                            target={'x': target_coordinates.x, 'y': target_coordinates.y}) == 1:
-            # If we are next to an enemy, attack again for good measure
-            ascifight.strategy.issue_order(order="destroy",
-                                           actor_id=actor["ident"],
-                                           direction=direction,
-                                           client=self.client)
-        else:
+                                          target=to_coordinates(target_coordinates), team=TEAM)
+
+        distance = computations.distance(to_coordinates(actor_coordinates), to_coordinates(target_coordinates))
+        if distance > 1:
             issue_order(client=self.client, order="move", actor_id=actor["ident"], direction=direction)
 
 
