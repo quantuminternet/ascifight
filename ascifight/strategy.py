@@ -65,6 +65,15 @@ class GetFlagStrategy:
                 origin=actor_coordinates, target=home_coordinates
             )[0]
 
+            # if we are already just 1 space apart we are there
+            if compute_distance(origin=actor_coordinates, target=home_coordinates) == 1:
+                # we put the flag on our base
+                issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
+            else:
+                # if we are not there we slog on home
+                issue_order(order="move", actor_id=actor["ident"], direction=direction)
+
+
 def to_coordinates(input_coords: dict):
     return computations.Coordinates(x=input_coords['x'], y=input_coords['y'])
 

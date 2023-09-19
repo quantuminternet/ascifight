@@ -86,25 +86,6 @@ def get_information(info_type: str):
     return response.json()
 
 
-def to_coordinates(input_coords: dict):
-    return computations.Coordinates(x=input_coords['x'], y=input_coords['y'])
-
-
-def compute_direction(origin, target) -> list[computations.Directions]:
-    return computations.calc_target_coordinate_direction(to_coordinates(origin), to_coordinates(target))
-
-
-def compute_distance(origin, target) -> int:
-    return computations.distance(to_coordinates(origin), to_coordinates(target))
-
-
-def issue_order(order: str, actor_id: str, direction: computations.Directions):
-    logger.info("Issuing order", order=order, actor_id=actor_id, direction=direction)
-    client.post(
-        url=f"{SERVER}orders/{order}/{actor_id}",
-        params={"direction": direction.value},
-        auth=(TEAM, PASSWORD),
-    )
 
 
 def game_loop():
