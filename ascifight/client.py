@@ -14,7 +14,7 @@ logger = structlog.get_logger()
 SERVER = "http://84.63.250.234/"
 # local server
 # SERVER = "http://127.0.0.1:8000"
-TEAM = "Team 2"
+TEAM = "EverythingsAwesome"
 PASSWORD = "2"
 client = None
 # does not seem to work
