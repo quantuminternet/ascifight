@@ -8,19 +8,22 @@ SERVER = "http://sessionstation.de/"
 logger = structlog.get_logger()
 
 TEAM = "EverythingsAwesome"
-PASSWORD = "VFRules"
+PASSWORD = "VFRulez"
 
 def create_actor(remote_actor, client):
     strategy = get_strategy(remote_actor, client)
     logger.info('Creating actor for remote actor', remote_actor=remote_actor['ident'])
     return actor_strategies.actors.Actor(strategy=strategy, actor_id=remote_actor['ident'])
 
+
 def get_strategy(remote_actor, client):
     if remote_actor['ident'] == 0:
-        return GetFlagStrategy(target='TimeOut', client=client)
+        return GetFlagStrategy(target='Timeout', client=client)
     elif remote_actor['ident'] == 1:
         return GetFlagStrategy(target='Superdetractors', client=client)
     elif remote_actor['ident'] == 2:
+        return GetFlagStrategy(target='ByteMe', client=client)
+    else:
         return GetFlagStrategy(target='ByteMe', client=client)
 
 

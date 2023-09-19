@@ -2,7 +2,7 @@ import httpx
 import structlog
 import time
 import strategy
-
+import logging
 import ascifight.computations as computations
 
 logger = structlog.get_logger()
@@ -26,7 +26,7 @@ def execute():
 
     own_remote_actors = [actor for actor in state['actors'] if actor['team'] == TEAM]
     actors = [
-       strategy.create_actor(remote_actor) for remote_actor in own_remote_actors]
+       strategy.create_actor(remote_actor, client=client) for remote_actor in own_remote_actors]
 
     for actor in actors:
         logger.info('Executing actor')
@@ -114,6 +114,7 @@ def game_loop():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level='DEBUG')
     logger.info('Starting client')
     client = httpx.Client(proxies=proxy)
     game_loop()
