@@ -100,11 +100,15 @@ class AttackEnemyStrategy:
                                                                           actor_id=actor["ident"])
         direction = pathfinding.find_path(game_state=gamestate, rules=rules, actor_id=self.actor_id,
                                           target=target_coordinates, team=TEAM)
-        #if compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
-        #    pass
-        # if we are not there yet we need to go
-        #else:
-        issue_order(client=self.client, order="move", actor_id=actor["ident"], direction=direction)
+        if compute_distance(origin=actor_coordinates,
+                            target={'x': target_coordinates.x, 'y': target_coordinates.y}) == 1:
+            # If we are next to an enemy, attack again for good measure
+            ascifight.strategy.issue_order(order="destroy",
+                                           actor_id=actor["ident"],
+                                           direction=direction,
+                                           client=self.client)
+        else:
+            issue_order(client=self.client, order="move", actor_id=actor["ident"], direction=direction)
 
 
 
