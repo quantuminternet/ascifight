@@ -61,16 +61,16 @@ class Actor:
 
     def construct_strategy(self, strategy: str) -> Strategy:
         if strategy == 'GetFlag0':
-            return GetFlagStrategy(target='TimeOut')
+            return GetFlagStrategy(target='TimeOut', actor_id=self.actor_id)
         elif strategy == 'GetFlag1':
-            return GetFlagStrategy(target='Superdetractors')
+            return GetFlagStrategy(target='Superdetractors', actor_id=self.actor_id)
         elif strategy == 'GetFlag2':
-            return GetFlagStrategy(target='ByteMe')
+            return GetFlagStrategy(target='ByteMe', actor_id=self.actor_id)
 
     def make_attack(self):
         directions = ['left', 'right', 'top', 'bottom']
         direction = random.choice(directions)
-        #issue_order(order="attack", actor_id=self.actor_id, direction=direction)
+        issue_order(order="attack", actor_id=self.actor_id, direction=direction)
 
     def destroy_walls(self):
         pass
