@@ -22,7 +22,7 @@ def get_strategy(remote_actor, client, game_state):
     if remote_actor['type'] == 'Runner':
         home_basecoords = [base for base in game_state['bases'] if base['team'] == TEAM][0]['coordinates']
         dist_dict = {}
-        for flag in game_state['flags']:
+        for flag in game_state['bases']:
             if flag['team'] != TEAM:
                 target_coordinates = flag['coordinates']
                 dist_dict[flag['team']] = compute_distance(origin=home_basecoords, target=target_coordinates)
@@ -50,9 +50,9 @@ class GetFlagStrategy:
         # this teams flag we want to get
         target_team = self.target
         # this is the base we need to go to, assuming their flag is there?
-        target_base = [base for base in gamestate["bases"] if base["team"] == target_team][0]
-        # these are the bases coordinates
-        target_coordinates = target_base["coordinates"]
+        target_flag = [flag for flag in gamestate["flags"] if flag["team"] == target_team][0]
+        # these are the flags coordinates
+        target_coordinates = target_flag["coordinates"]
         # this is our base
         home_base = [base for base in gamestate["bases"] if base["team"] == 'EverythingsAwesome'][0]
         # we need the coordinates when we want to go home
