@@ -17,7 +17,8 @@ class GetFlagStrategy(Strategy):
 
 class Actor:
 
-    def __init__(self, strategy: str):
+    def __init__(self, strategy: str, actor_id: int):
+        self.actor_id = actor_id
         self.strategy = self.construct_strategy(strategy=strategy)
 
     def construct_strategy(self, strategy: str) -> Strategy:
