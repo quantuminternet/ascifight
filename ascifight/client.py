@@ -1,62 +1,73 @@
 import httpx
 import logging
 import time
+import strategy
 
 logger = logging.getLogger()
 
-SERVER = "http://127.0.0.1:8000/"
-TEAM = "Team 1"
+SERVER = "http://sessionstation.de/"
+TEAM = "EverythingsAwesome"
 PASSWORD = "1"
 
 
 def execute():
     # put your execution code here
     state = get_information("game_state")
-    teams = state["teams"].copy()
-    # remove our own team from the teams to target
-    teams.remove(TEAM)
-    # this teams flag we want to get
-    target_team = teams[0]
-    # this is the base we need to go to, assuming their flag is there?
-    target_base = [base for base in state["bases"] if base["team"] == target_team][0]
-    # these are the bases coordinates
-    target_coordinates = target_base["coordinates"]
-    # this is our base
-    home_base = [base for base in state["bases"] if base["team"] == TEAM][0]
-    # we need the coordinates when we want to go home
-    home_coordinates = home_base["coordinates"]
-    # we will just use the first of our actors we have
-    # assuming that it will be able to grab the flag
-    actor = [actor for actor in state["actors"] if actor["team"] == TEAM][0]
-    # thats where the actor currently is
-    actor_coordinates = actor["coordinates"]
-    # if it doesn't have the flag it needs to go to the enemy base
-    if not actor["flag"]:
-        # we can calculate the direction of the enemy base or get it from the server
-        direction = compute_direction(
-            origin=actor_coordinates, target=target_coordinates
-        )[0]
-        # we need to stop if we are standing right next to the base
-        if compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
-            # and grab the flag, the direction is the one we would have walked to
-            issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
-        # if we are not there yet we need to go
-        else:
-            issue_order(order="move", actor_id=actor["ident"], direction=direction)
-    # if it has the flag we need to head home
-    else:
-        # where is home?
-        direction = compute_direction(
-            origin=actor_coordinates, target=home_coordinates
-        )[0]
+    #teams = state["teams"].copy()
 
-        # if we are already just 1 space apart we are there
-        if compute_distance(origin=actor_coordinates, target=home_coordinates) == 1:
-            # we put the flag on our base
-            issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
-        else:
-            # if we are not there we slog on home
-            issue_order(order="move", actor_id=actor["ident"], direction=direction)
+    own_remote_actors = [actor for actor in state['actors'] if actor['team'] == TEAM]
+    actors = [
+       strategy.create_actor(remote_actor) for remote_actor in own_remote_actors]
+
+    for actor in actors:
+        actor.execute(state)
+
+
+
+    # # remove our own team from the teams to target
+    # teams.remove(TEAM)
+    # # this teams flag we want to get
+    # target_team = teams[0]
+    # # this is the base we need to go to, assuming their flag is there?
+    # target_base = [base for base in state["bases"] if base["team"] == target_team][0]
+    # # these are the bases coordinates
+    # target_coordinates = target_base["coordinates"]
+    # # this is our base
+    # home_base = [base for base in state["bases"] if base["team"] == TEAM][0]
+    # # we need the coordinates when we want to go home
+    # home_coordinates = home_base["coordinates"]
+    # # we will just use the first of our actors we have
+    # # assuming that it will be able to grab the flag
+    # actor = [actor for actor in state["actors"] if actor["team"] == TEAM][0]
+    # # thats where the actor currently is
+    # actor_coordinates = actor["coordinates"]
+    # # if it doesn't have the flag it needs to go to the enemy base
+    # if not actor["flag"]:
+    #     # we can calculate the direction of the enemy base or get it from the server
+    #     direction = compute_direction(
+    #         origin=actor_coordinates, target=target_coordinates
+    #     )[0]
+    #     # we need to stop if we are standing right next to the base
+    #     if compute_distance(origin=actor_coordinates, target=target_coordinates) == 1:
+    #         # and grab the flag, the direction is the one we would have walked to
+    #         issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
+    #     # if we are not there yet we need to go
+    #     else:
+    #         issue_order(order="move", actor_id=actor["ident"], direction=direction)
+    # # if it has the flag we need to head home
+    # else:
+    #     # where is home?
+    #     direction = compute_direction(
+    #         origin=actor_coordinates, target=home_coordinates
+    #     )[0]
+    #
+    #     # if we are already just 1 space apart we are there
+    #     if compute_distance(origin=actor_coordinates, target=home_coordinates) == 1:
+    #         # we put the flag on our base
+    #         issue_order(order="grabput", actor_id=actor["ident"], direction=direction)
+    #     else:
+    #         # if we are not there we slog on home
+    #         issue_order(order="move", actor_id=actor["ident"], direction=direction)
 
 
 def get_information(info_type: str):
