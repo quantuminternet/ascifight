@@ -176,3 +176,13 @@ def compute_direction(origin, target) -> list[computations.Directions]:
 
 def compute_distance(origin, target) -> int:
     return computations.distance(to_coordinates(origin), to_coordinates(target))
+
+
+def get_nearest_enemy_coordinates(game_state: dict, team: str, actor_id: int) -> computations.Coordinates:
+    enemy_actors = [actor for actor in game_state['actors'] if actor['team'] != team]
+    this_actor = next(actor for actor in game_state['actors'] if actor['team'] == team and actor['ident'] == actor_id)
+    nearest_enemy = sorted(enemy_actors,
+                           key=lambda enemy: computations.distance(to_coordinates(enemy['coordinates']),
+                                                                   to_coordinates(this_actor['coordinates'])),
+                           reverse=True)[0]
+    return computations.Coordinates(x=nearest_enemy['coordinates']['x'], y=nearest_enemy['coordinates']['y'])
