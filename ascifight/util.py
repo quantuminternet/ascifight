@@ -192,7 +192,7 @@ def get_nearest_enemy_direction(game_state: dict, team: str, actor_id: int) -> l
 def get_nearest_enemy_coordinates(game_state: dict, team: str, actor_id: int, actor_type: str | None = None) \
         -> computations.Coordinates:
     enemy_actors = [actor for actor in game_state['actors'] if actor['team'] != team]
-    if type:
+    if actor_type:
         enemy_actors = [actor for actor in enemy_actors if actor['type'] == actor_type]
     this_actor = next(actor for actor in game_state['actors'] if actor['team'] == team and actor['ident'] == actor_id)
     nearest_enemy = sorted(enemy_actors,
