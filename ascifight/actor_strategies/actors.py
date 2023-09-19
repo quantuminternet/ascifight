@@ -2,6 +2,16 @@ import abc
 
 class Strategy(abc.ABC):
 
+    @abc.abstractmethod
+    def execute(self, gamestate):
+        raise NotImplementedError
+
+
+class GetFlagStrategy(Strategy):
+
+    def __init__(self, target: str):
+        self.target = target
+
     def execute(self, gamestate):
         pass
 
@@ -19,7 +29,6 @@ class Actor:
 
     def destroy_walls(self):
         pass
-
 
     def execute(self, gamestate):
         self.make_attack()
