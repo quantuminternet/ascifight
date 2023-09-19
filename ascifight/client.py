@@ -27,7 +27,7 @@ def execute():
 
     own_remote_actors = [actor for actor in state['actors'] if actor['team'] == TEAM]
     actors = [
-       strategy.create_actor(remote_actor, client=client) for remote_actor in own_remote_actors]
+       strategy.create_actor(remote_actor, client=client, game_state=state) for remote_actor in own_remote_actors]
 
     for actor in actors:
         logger.info('Executing actor')

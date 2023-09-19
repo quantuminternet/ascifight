@@ -11,23 +11,27 @@ logger = structlog.get_logger()
 TEAM = "EverythingsAwesome"
 PASSWORD = "VFRulez"
 
-def create_actor(remote_actor, client):
-    strategy = get_strategy(remote_actor, client)
+def create_actor(remote_actor, client, game_state):
+    strategy = get_strategy(remote_actor, client, game_state)
     logger.info('Creating actor for remote actor', remote_actor=remote_actor['ident'])
     return actor_strategies.actors.Actor(strategy=strategy, actor_id=remote_actor['ident'], client=client)
 
 
-def get_strategy(remote_actor, client):
+def get_strategy(remote_actor, client, game_state):
     if remote_actor['type'] == 'Runner':
+        home_basecoords = [base for base in game_state['bases'] if base['team'] == TEAM][0]['coordinates']
+        dist_dict = {}
+        for flag in game_state['flags']:
+            if flag['team'] != TEAM:
+                target_coordinates = flag['coordinates']
+                dist_dict[flag['team']] = compute_distance(origin=home_basecoords, target=target_coordinates)
+
+        sorted_targets = list(dict(sorted(dist_dict.items(), key=lambda item: item[1])).keys())
         if remote_actor['ident'] == 0:
-            return GetFlagStrategy(target='Timeout', client=client, actor_id=remote_actor['ident'])
+            return GetFlagStrategy(target=sorted_targets[0], client=client, actor_id=remote_actor['ident'])
         elif remote_actor['ident'] == 1:
-            return GetFlagStrategy(target='Superdetractors', client=client, actor_id=remote_actor['ident'])
-        elif remote_actor['ident'] == 2:
-            return GetFlagStrategy(target='ByteMe', client=client, actor_id=remote_actor['ident'])
-        else:
-            return GetFlagStrategy(target='ByteMe', client=client, actor_id=remote_actor['ident'])
-        
+            return GetFlagStrategy(target=sorted_targets[1], client=client, actor_id=remote_actor['ident'])
+
     elif remote_actor['type'] == 'Attacker':
         if remote_actor['ident'] == 0:
             return GetFlagStrategy(target='Timeout', client=client, actor_id=remote_actor['ident'])
