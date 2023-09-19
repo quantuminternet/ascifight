@@ -34,7 +34,12 @@ def get_strategy(remote_actor, client, game_state):
             return GetFlagStrategy(target=sorted_targets[1], client=client, actor_id=remote_actor['ident'])
 
     elif remote_actor['type'] == 'Attacker':
-        return AttackEnemyStrategy(client=client, actor_id=remote_actor['ident'])
+        if remote_actor['ident'] == 1:
+            return AttackEnemyStrategy(client=client, actor_id=remote_actor['ident'])
+        elif remote_actor['ident'] == 2:
+            return AttackEnemyStrategy(client=client, actor_id=remote_actor['ident'])
+        elif remote_actor['ident'] == 3:
+            return AttackEnemyStrategy(client=client, actor_id=remote_actor['ident'])
 
     elif remote_actor['type'] == 'Destroyer':
         return DestroyerStrategy(client=client, actor_id=remote_actor['ident'])
