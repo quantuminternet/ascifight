@@ -1,4 +1,5 @@
 import abc
+import random
 
 class Strategy(abc.ABC):
 
@@ -65,7 +66,9 @@ class Actor:
         return strategy_dict.get(strategy)
 
     def make_attack(self):
-        pass
+        directions = ['left', 'right', 'top', 'bottom']
+        direction = random.choice(directions)
+        #issue_order(order="attack", actor_id=self.actor_id, direction=direction)
 
     def destroy_walls(self):
         pass
