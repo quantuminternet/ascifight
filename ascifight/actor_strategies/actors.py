@@ -19,7 +19,10 @@ class Actor:
         ascifight.strategy.issue_order(order="attack", actor_id=self.actor_id, direction=direction, client=self.client)
 
     def destroy_walls(self):
-        directions = ['left', 'right', 'top', 'bottom']
+        directions = [computations.Directions.left,
+                      computations.Directions.right,
+                      computations.Directions.up,
+                      computations.Directions.down]
         direction = random.choice(directions)
         ascifight.strategy.issue_order(order="destroy", actor_id=self.actor_id, direction=direction, client=self.client)
 
