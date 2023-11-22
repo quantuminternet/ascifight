@@ -28,7 +28,7 @@ class AttackOrder(Order):
         ge=0,
         le=len(config.config["game"]["actors"]) - 1,
     )
-    direction: computations.Directions = Field(
+    direction: 'computations.Directions' = Field(
         title="Direction",
         description="The direction to attack from the position of the actor.",
     )
@@ -43,7 +43,7 @@ class MoveOrder(Order):
         ge=0,
         le=len(config.config["game"]["actors"]) - 1,
     )
-    direction: computations.Directions = Field(
+    direction: 'computations.Directions' = Field(
         title="Direction",
         description=(
             "The direction to move to from the position of the actor. 'up' "
@@ -62,7 +62,7 @@ class GrabPutOrder(Order):
         ge=0,
         le=len(config.config["game"]["actors"]) - 1,
     )
-    direction: computations.Directions = Field(
+    direction: 'computations.Directions' = Field(
         title="Direction",
         description=(
             "The direction to grab of put the flag from the position of the actor. "
@@ -79,7 +79,7 @@ class BuildOrder(Order):
         ge=0,
         le=len(config.config["game"]["actors"]) - 1,
     )
-    direction: computations.Directions = Field(
+    direction: 'computations.Directions' = Field(
         title="Direction",
         description="The direction to build from the position of the actor.",
     )
@@ -94,7 +94,7 @@ class DestroyOrder(Order):
         ge=0,
         le=len(config.config["game"]["actors"]) - 1,
     )
-    direction: computations.Directions = Field(
+    direction: 'computations.Directions' = Field(
         title="Direction",
         description="The direction to destroy from the position of the actor.",
     )
