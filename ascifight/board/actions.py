@@ -22,7 +22,7 @@ class BoardActions:
     def calc_target_coordinates(
         self,
         origin: data.Actor | data.Coordinates,
-        direction: computations.Directions,
+        direction: 'computations.Directions',
     ) -> data.Coordinates:
         coordinates = (
             origin
@@ -37,7 +37,7 @@ class BoardActions:
         self,
         origin: data.BoardObject | data.Coordinates,
         target: data.BoardObject | data.Coordinates,
-    ) -> list[computations.Directions]:
+    ) -> list['computations.Directions']:
         origin_coordinates = (
             origin
             if isinstance(origin, data.Coordinates)
@@ -53,7 +53,7 @@ class BoardActions:
         )
 
     def move(
-        self, actor: data.Actor, direction: computations.Directions
+        self, actor: data.Actor, direction: 'computations.Directions'
     ) -> tuple[bool, None | data.Team]:
         team_that_captured = None
         new_coordinates = self.calc_target_coordinates(actor, direction)
@@ -63,7 +63,7 @@ class BoardActions:
         return moved, team_that_captured
 
     def attack(
-        self, actor: data.Actor, direction: computations.Directions
+        self, actor: data.Actor, direction: 'computations.Directions'
     ) -> tuple[bool, None | data.Team]:
         attacked = False
         team_that_killed = None
@@ -87,7 +87,7 @@ class BoardActions:
                     team_that_killed = actor.team
         return attacked, team_that_killed
 
-    def build(self, actor: data.Actor, direction: computations.Directions) -> bool:
+    def build(self, actor: data.Actor, direction: 'computations.Directions') -> bool:
         built = False
         if not actor.build:
             self._logger.warning(f"{actor} can not build.")
@@ -113,7 +113,7 @@ class BoardActions:
                     self.board_data.walls_coordinates.add(target_coordinates)
         return built
 
-    def destroy(self, actor: data.Actor, direction: computations.Directions) -> bool:
+    def destroy(self, actor: data.Actor, direction: 'computations.Directions') -> bool:
         destroyed = False
         if not actor.destroy:
             self._logger.warning(f"{actor} can not destroy.")
@@ -136,7 +136,7 @@ class BoardActions:
         return destroyed
 
     def grabput_flag(
-        self, actor: data.Actor, direction: computations.Directions
+        self, actor: data.Actor, direction: 'computations.Directions'
     ) -> tuple[bool, None | data.Team]:
         team_that_captured = None
         target_coordinates = self.calc_target_coordinates(actor, direction)
